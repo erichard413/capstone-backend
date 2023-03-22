@@ -54,10 +54,23 @@ function ensureCorrectUserOrAdmin(req,res,next){
         return next(err);
     }
 }
+// Check if logged in user matches route param. If not, returns error Unauthorized.
+function ensureCorrectUser(req,res,next){
+    try {
+        const user = res.locals.user;
+        if (!(user && (user.username === req.params.username))) {
+            throw new UnauthorizedError();
+        }
+        return next();
+    } catch (err) {
+        return next(err);
+    }
+}
 
 module.exports = {
     authenticateJWT,
     ensureLoggedIn,
     ensureAdmin,
-    ensureCorrectUserOrAdmin
+    ensureCorrectUserOrAdmin,
+    ensureCorrectUser
 }

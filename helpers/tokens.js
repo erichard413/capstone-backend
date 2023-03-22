@@ -9,6 +9,7 @@ function createToken(user) {
 
   let payload = {
     username: user.username,
+    favTeam: user.favTeamId,
     isAdmin: user.isAdmin || false,
   };
 
