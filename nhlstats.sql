@@ -25,3 +25,4 @@ CREATE DATABASE nhlstats_test;
 \connect nhlstats_test
 
 \i nhlstats-schema.sql
+\i nhlstats-seed.sql

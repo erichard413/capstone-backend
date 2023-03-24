@@ -95,6 +95,16 @@ class User {
             WHERE username=$1 AND player_id=$2`, [username, playerId]);
         return result.rows[0];
     }
+    // get player's favorite player list
+    static async getFavoritePlayers(username) {
+        const result = await db.query(
+            `SELECT player_id AS "playerId"
+            FROM fav_players
+            WHERE username=$1`, [username]);
+        return result.rows;
+    }
+
+
     /** Update user data with 'data'
      * 
      * This function will take in data, and update our user on the back end. Not all data is required to be updated. This function will do a partial update.
@@ -155,6 +165,16 @@ class User {
         DELETE FROM users_teams WHERE username=$1 AND team_id=$2
         `, [username, teamId])
         return
+    }
+    static async getUserTeams(username) {
+        const userCheck = await db.query(`SELECT username FROM users WHERE username=$1`, [username]);
+        if (!userCheck.rows[0]) throw new NotFoundError(`No username exists: ${username}`);
+
+        const result = await db.query(`
+        SELECT teams.team_id AS "id", teams.name FROM users_teams LEFT JOIN teams ON users_teams.team_id = teams.team_id WHERE users_teams.username=$1
+        `, [username]);
+
+        return result.rows
     }
 }
 

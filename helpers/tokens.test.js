@@ -8,6 +8,7 @@ describe("createToken", function () {
     const payload = jwt.verify(token, ACCESS_TOKEN_SECRET);
     expect(payload).toEqual({
       iat: expect.any(Number),
+      favTeamId: null,
       username: "test",
       isAdmin: false,
     });
@@ -18,6 +19,7 @@ describe("createToken", function () {
     const payload = jwt.verify(token, ACCESS_TOKEN_SECRET);
     expect(payload).toEqual({
       iat: expect.any(Number),
+      favTeamId: null,
       username: "test",
       isAdmin: true,
     });
@@ -29,6 +31,7 @@ describe("createToken", function () {
     const payload = jwt.verify(token, ACCESS_TOKEN_SECRET);
     expect(payload).toEqual({
       iat: expect.any(Number),
+      favTeamId: null,
       username: "test",
       isAdmin: false,
     });

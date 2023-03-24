@@ -9,7 +9,6 @@ const express = require('express');
 const router = new express.Router();
 const { ensureCorrectUserOrAdmin, ensureCorrectUser, ensureAdmin } = require("../middleware/auth");
 
-// const userAuthSchema = require('../schemas/userAuth.json');
 const userNew = require('../schema/JSON-SCHEMA/userNew');
 const userUpdate = require('../schema/JSON-SCHEMA/userUpdate.json');
 const {BadRequestError} = require('../expressError');
@@ -23,13 +22,14 @@ const {BadRequestError} = require('../expressError');
  * Auth required: admin.
  * 
  */
-router.post('/', ensureAdmin, async function(res,req,next){
+router.post('/', ensureAdmin, async function(req, res, next){
     try {
         const validator = jsonschema.validate(req.body, userNew);
         if(!validator.valid) {
             const errs = validator.errors.map(e=>e.stack);
             throw new BadRequestError(errs);
         }
+        
         const user = await User.register(req.body);
         const token = createToken(user);
         return res.status(201).json({user, token});
@@ -40,19 +40,19 @@ router.post('/', ensureAdmin, async function(res,req,next){
 
 
 // POST /users/:username/players/:playerId -> this route will add a player of player ID to the user's favorite player list.
-router.post('/:username/players/:playerId', ensureCorrectUser, async function(req, res, next){
+router.post('/:username/players/:playerId', ensureCorrectUserOrAdmin, async function(req, res, next){
     try {
         
         const username = req.params.username;
         const playerId = req.params.playerId;
         await User.addFavoritePlayer(username, playerId)
-        return res.json({message: `Player added successfully!`})
+        return res.status(201).json({message: `Player added successfully!`})
     } catch (err) {
         return next(err);
     }
 });
 // DELETE /users/:username/players/:playerId -> this route will remove a player of player ID from the user's favorite player list.
-router.delete('/:username/players/:playerId', ensureCorrectUser, async function(req, res, next){
+router.delete('/:username/players/:playerId', ensureCorrectUserOrAdmin, async function(req, res, next){
     try {
         const username = req.params.username;
         const playerId = req.params.playerId;
@@ -62,6 +62,25 @@ router.delete('/:username/players/:playerId', ensureCorrectUser, async function(
         return next(err);
     }
 });
+
+/** GET /users/:username/players -> this route will retrieve listing of users' favorite players.
+ *  
+ * Auth: requires username matches logged in user.
+ * 
+ * returns { favorites: [{playerId},{playerId}]}
+ */ 
+
+router.get('/:username/players', ensureCorrectUserOrAdmin, async function(req, res, next) {
+    try {
+        const username = req.params.username;
+        const result = await User.getFavoritePlayers(username);
+        let favoriteList = result.map(r => r.playerId);
+        return res.json({favorites: favoriteList})
+    } catch (err) {
+        return next(err);
+    }
+})
+
 /** PATCH /[username] {user} => {user}
  * 
  * Data can include:
@@ -90,7 +109,7 @@ router.patch('/:username', ensureCorrectUserOrAdmin, async function(req, res, ne
  *  
  *  Auth: username matches logged in user.
  */
-router.post('/:username/teams/:teamId', ensureCorrectUser, async function(req, res, next){
+router.post('/:username/teams/:teamId', ensureCorrectUserOrAdmin, async function(req, res, next){
     try {
         const {username, teamId} = req.params;
         await User.addTeam(username, teamId);
@@ -105,12 +124,34 @@ router.post('/:username/teams/:teamId', ensureCorrectUser, async function(req, r
  * Error if team Id is invalid.
  * 
  */
-router.delete('/:username/teams/:teamId', ensureCorrectUser, async function(req, res, next){
+router.delete('/:username/teams/:teamId', ensureCorrectUserOrAdmin, async function(req, res, next){
     try {
         const {username, teamId} = req.params;
         await User.removeTeam(username, teamId);
         return res.json({message: `Team removed successfully!`})
     } catch (err) {
+        return next(err);
+    }
+})
+
+/** GET /:username/teams
+ * Route will return list of user's team watch list;
+ * 
+ * Error if username is not existing
+ * 
+ * Auth required: correct user OR admin
+ */
+
+router.get('/:username/teams', ensureCorrectUserOrAdmin, async function (req, res, next){
+    try {
+        const {username} = req.params;
+        const result = await User.getUserTeams(username);
+        const output = {}
+        Object.keys(result).map(key => (
+            output[result[key].id] = result[key].name
+        ))
+        return res.json(output);
+    } catch(err) {
         return next(err);
     }
 })
