@@ -156,4 +156,20 @@ router.get('/:username/teams', ensureCorrectUserOrAdmin, async function (req, re
     }
 })
 
+/** GET /:username
+ * 
+ * Route will return user data
+ * 
+ * Auth required: correct user OR admin
+ */
+router.get('/:username', ensureCorrectUserOrAdmin, async function (req, res, next){
+    try {
+        const {username} = req.params;
+        const result = await User.getUserData(username);
+        return res.json(result);
+    } catch(err) {
+        return next(err);
+    }
+})
+
 module.exports = router;

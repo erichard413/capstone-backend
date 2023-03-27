@@ -360,5 +360,34 @@ describe("GET /users/:username/teams", function(){
   });
 })
 
+/************************************** GET /users/:username */
+
+describe("GET /users/:username", function(){
+  test("works: USER-> returns user data", async function(){
+    const resp = await request(app).get('/users/u1').set("authorization", `Bearer ${u1Token}`);
+    expect(resp.statusCode).toBe(200);
+    console.log(resp)
+    expect(resp.text).toContain("U1");
+  });
+  test("works: ADMIN-> returns user data", async function(){
+    const resp = await request(app).get('/users/u1').set("authorization", `Bearer ${adminToken}`);
+    expect(resp.statusCode).toBe(200);
+    expect(resp.text).toContain("U1");
+  });
+  test("throws error when no token", async function(){
+    try {
+      await request(app).get('/users/ua');
+    } catch(err) {
+      expect(err instanceof UnauthorizedError);
+    }
+  });
+  test("throws error when different users' token", async function(){
+    try {
+      await request(app).get('/users/ua').set("authorization", `Bearer ${u2Token}`);
+    } catch(err) {
+      expect(err instanceof UnauthorizedError);
+    }
+  });
+})
 
 

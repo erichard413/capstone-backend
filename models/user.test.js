@@ -202,5 +202,21 @@ describe("works: removes team from users' watch list", function(){
   })
 })
 
+/************************************** get user data */
+
+describe("works: retrieves user data for username", function (){
+  test("should retrieve data for user", async function(){
+    const result = await User.getUserData("u1");
+    expect(JSON.stringify(result)).toContain("u1")
+  })
+  test("should throw error if no username exists", async function(){
+    try {
+      await User.getUserData("blah");
+    } catch(err) {
+      expect(err instanceof NotFoundError);
+    }
+  })
+})
+
 
 

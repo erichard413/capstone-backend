@@ -176,6 +176,12 @@ class User {
 
         return result.rows
     }
+    static async getUserData(username) {
+        const result = await db.query(`SELECT username, first_name AS "firstName", last_name AS "lastName", email, team_id AS "favTeamId" FROM users WHERE username=$1`, [username]);
+        if (!result.rows[0]) throw new NotFoundError(`No username ${username}`);
+
+        return result.rows[0]
+    }
 }
 
 module.exports = User;
