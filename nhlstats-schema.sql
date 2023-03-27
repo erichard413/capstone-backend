@@ -26,3 +26,14 @@ CREATE TABLE fav_players (
     username VARCHAR(25) REFERENCES users ON DELETE CASCADE,
     player_id INTEGER NOT NULL
 )
+
+CREATE TABLE players (
+    player_id INTEGER NOT NULL,
+    team_id INTEGER REFERENCES teams,
+    full_name VARCHAR(50),
+    jersey_num INTEGER NOT NULL,
+    position VARCHAR(15),
+    type VARCHAR(15),
+    posAbbr VARCHAR(3)
+)
+

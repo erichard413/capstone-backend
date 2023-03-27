@@ -6,6 +6,7 @@ DROP TABLE users;
 DROP TABLE teams;
 DROP TABLE users_teams;
 DROP TABLE fav_players;
+DROP TABLE players;
 DROP DATABASE nhlstats;
 CREATE DATABASE nhlstats;
 \connect nhlstats
@@ -20,6 +21,7 @@ DROP TABLE users;
 DROP TABLE teams;
 DROP TABLE users_teams;
 DROP TABLE fav_players;
+DROP TABLE players;
 DROP DATABASE nhlstats_test;
 CREATE DATABASE nhlstats_test;
 \connect nhlstats_test

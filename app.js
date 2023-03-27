@@ -1,5 +1,5 @@
 "use strict";
-
+const cron = require('node-cron');
 const express = require("express");
 const cors = require("cors");
 
@@ -9,6 +9,7 @@ const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
 const teamRoutes = require("./routes/teams");
 const playerRoutes = require("./routes/players");
+const Players = require("./models/players");
 
 const morgan = require("morgan");
 
@@ -23,6 +24,12 @@ app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/teams", teamRoutes);
 app.use("/players", playerRoutes);
+
+/** This will run every 24 hours to retrieve list of players, and save to the database - this accounts for roster changes. players table is refreshed everytime this function runs. */
+cron.schedule('0 0 * * *', async () => {
+  await Players.saveAllPlayers();
+  console.log(`FETCHED PLAYERS`)
+});
 
 /** Handle 404 errors -- this matches everything */
 app.use(function (req, res, next) {
