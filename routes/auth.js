@@ -30,6 +30,7 @@ router.post('/token', async function (req, res, next) {
 // POST /auth/register -> user will include data: username, password, firstName, lastName, email, team
 // returns token
 router.post('/register', async function (req, res, next){
+    req.body.favTeamId = +req.body.favTeamId;
     try {
         const validator = jsonschema.validate(req.body, userRegisterSchema);
         if (!validator.valid) {

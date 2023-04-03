@@ -90,6 +90,11 @@ router.get('/:username/players', ensureCorrectUserOrAdmin, async function(req, r
  * Auth: admin or username matches logged in user.
  */
 router.patch('/:username', ensureCorrectUserOrAdmin, async function(req, res, next){
+    
+    if (req.body.favTeamId) {
+        req.body.favTeamId = +req.body.favTeamId;
+    }
+    
     try {
         const validator = jsonschema.validate(req.body, userUpdate);
         if (!validator.valid) {

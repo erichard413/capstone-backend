@@ -36,4 +36,3 @@ CREATE TABLE players (
     type VARCHAR(15),
     posAbbr VARCHAR(3)
 )
-

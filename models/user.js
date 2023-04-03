@@ -69,14 +69,14 @@ class User {
             [username, hashedPassword, firstName, lastName, email, favTeamId, isAdmin]
         );
         const user = result.rows[0];
-
-        if (user.favTeamId) {
-            await db.query(`
-            INSERT INTO users_teams
-            (username, team_id)
-            VALUES ($1, $2)
-            `, [username, favTeamId]);
-        }
+        // commenting this out -> I am undecided if register route should add team to users_teams.
+        // if (user.favTeamId) {
+        //     await db.query(`
+        //     INSERT INTO users_teams
+        //     (username, team_id)
+        //     VALUES ($1, $2)
+        //     `, [username, favTeamId]);
+        // }
 
         return user;
     }
@@ -118,7 +118,7 @@ class User {
     static async updateUser(username, data) {
         // encrypt the password, if data contains it.
         if (data.password) {
-            data.password = await bcrypt(data.password, BCRYPT_WORK_FACTOR);
+            data.password = await bcrypt.hash(data.password, BCRYPT_WORK_FACTOR);
         }
         const { setCols, values } = sqlForPartialUpdate(data, 
             {

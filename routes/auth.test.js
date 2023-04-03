@@ -1,7 +1,6 @@
 "use strict";
 
 const request = require("supertest");
-
 const app = require("../app");
 
 const {
@@ -83,6 +82,7 @@ describe("POST /auth/register", function () {
           lastName: "last",
           password: "password",
           email: "new@email.com",
+          favTeamId: 6
         });
     expect(resp.statusCode).toEqual(201);
     expect(resp.body).toEqual({

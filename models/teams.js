@@ -9,11 +9,12 @@ const {
 } = require('../expressError');
 
 class Team {
+
     // this will make an axios call to the NHL API, then format all relevent data to send to the front end.
     static async getTeams() {
         try {
             const result = await axios.get(`${NHLAPI_BASE_URL}/teams`);
-            return result.data.teams;
+            return result.data.teams.sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
         } catch (err) {
             console.error(`UNABLE TO FETCH DATA FROM API`);
         }
