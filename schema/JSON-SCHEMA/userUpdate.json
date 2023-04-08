@@ -19,7 +19,6 @@
         "maxLength": 30
       },
       "favTeamId": {
-        "type": "integer",
         "minimum" : 0
         },
       "email": {
