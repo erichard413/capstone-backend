@@ -176,5 +176,20 @@ router.get('/:username', ensureCorrectUserOrAdmin, async function (req, res, nex
         return next(err);
     }
 })
+/** DELETE /:username
+ * 
+ * Route will not be implemented for front end. Should only be used for testing.
+ * 
+ * Auth required: correct user OR admin
+ */
+router.delete('/:username', ensureCorrectUserOrAdmin, async function (req, res, next){
+    try {
+        const {username} = req.params;
+        await User.deleteUser(username);
+        return res.json({message: "User deleted successfully!"});
+    } catch(err) {
+        return next(err);
+    }
+})
 
 module.exports = router;

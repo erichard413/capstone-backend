@@ -182,6 +182,10 @@ class User {
 
         return result.rows[0]
     }
+    static async deleteUser(username) {
+        await db.query(`DELETE FROM users WHERE username=$1`, [username]);
+        return result.rows[0]
+    }
 }
 
 module.exports = User;
